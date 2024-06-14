@@ -4,7 +4,7 @@ PSQL="psql --username=freecodecamp --dbname=salon --tuples-only -c"
 echo -e "\n~~~~~ MY SALON ~~~~~"
 echo -e "\nWelcome to My Salon, how can I help you?\n"
 
-RESET_DATA=$($PSQL "TRUNCATE TABLE customers, appointments CASCADE;")
+# RESET_DATA=$($PSQL "TRUNCATE TABLE customers, appointments CASCADE;")
 
 MAIN_MENU() {
   if [[ $1 ]]
@@ -43,13 +43,17 @@ NEXT() {
   # book appointment time
   CUSTOMER_NAME=$($PSQL "SELECT name FROM customers WHERE phone='$CUSTOMER_PHONE'")
   SERVICE_NAME=$($PSQL "SELECT name FROM services WHERE service_id=$SERVICE_ID_SELECTED")
-  echo -e "\nWhat time would you like your $SERVICE_NAME, $CUSTOMER_NAME?"
+  echo -e "\nWhat time would you like your$SERVICE_NAME, $CUSTOMER_NAME?"
 
   read SERVICE_TIME
   CUSTOMER_ID=$($PSQL "SELECT customer_id FROM customers WHERE phone='$CUSTOMER_PHONE'")
   SERVICE_TIME_BOOKED=$($PSQL "INSERT INTO appointments(customer_id, service_id, time) VALUES($CUSTOMER_ID, $SERVICE_ID_SELECTED, '$SERVICE_TIME')")
 
-  echo -e "\nI have put you down for a $SERVICE_NAME at $SERVICE_TIME, $CUSTOMER_NAME."
+  if [[ $SERVICE_TIME_BOOKED == "INSERT 0 1" ]]
+  then
+    echo -e "\nI have put you down for a$SERVICE_NAME at $SERVICE_TIME,$CUSTOMER_NAME."
+  fi
+
 }
 
 EXIT() {
